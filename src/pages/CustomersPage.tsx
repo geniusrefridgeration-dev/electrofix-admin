@@ -110,10 +110,8 @@ export default function CustomersPage() {
                 <tr key={c._id} className="table-row" onClick={() => openDetail(c._id)}>
                   <td className="table-cell">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 font-semibold text-sm flex-shrink-0 overflow-hidden">
-                        {(c as any).profileImage ? (
-                          <img src={(c as any).profileImage} alt={c.name} className="w-full h-full object-cover" />
-                        ) : c.name.charAt(0).toUpperCase()}
+                      <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 font-semibold text-sm flex-shrink-0">
+                        {c.name.charAt(0).toUpperCase()}
                       </div>
                       <span className="font-medium text-sm">{c.name}</span>
                     </div>
@@ -176,10 +174,8 @@ export default function CustomersPage() {
             <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
               {/* Profile */}
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl overflow-hidden flex-shrink-0">
-                  {(selectedCustomer.customer as any).profileImage ? (
-                    <img src={(selectedCustomer.customer as any).profileImage} alt={selectedCustomer.customer.name} className="w-full h-full object-cover" />
-                  ) : selectedCustomer.customer.name.charAt(0).toUpperCase()}
+                <div className="w-14 h-14 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center text-primary-600 dark:text-primary-400 font-bold text-xl">
+                  {selectedCustomer.customer.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <p className="font-bold text-[var(--text)] text-lg">{selectedCustomer.customer.name}</p>

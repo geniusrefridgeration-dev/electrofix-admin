@@ -34,8 +34,6 @@ interface AppStore {
   // Theme
   theme: 'light' | 'dark'
   setTheme: (theme: 'light' | 'dark') => void
-  notifSound: 'chime' | 'bell' | 'ping' | 'none'
-  setNotifSound: (s: 'chime' | 'bell' | 'ping' | 'none') => void
   toggleTheme: () => void
 
   // Notifications
@@ -70,8 +68,6 @@ export const useAppStore = create<AppStore>()(
 
       // ── Theme ─────────────────────────────────────────────────────────────
       theme: 'light',
-      notifSound: 'chime' as 'chime' | 'bell' | 'ping' | 'none',
-      setNotifSound: (notifSound) => set({ notifSound }),
       setTheme: (theme) => {
         document.documentElement.classList.toggle('dark', theme === 'dark')
         set({ theme })

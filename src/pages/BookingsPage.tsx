@@ -6,7 +6,7 @@ import { format } from 'date-fns'
 import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
-const STATUSES = ['', 'pending', 'accepted', 'dispatched', 'completed', 'rejected', 'cancelled']
+const STATUSES = ['', 'pending', 'accepted', 'dispatched', 'completed', 'rejected']
 
 const REJECTION_REASONS_DEFAULT = [
   'Service area not covered',
@@ -43,9 +43,6 @@ export default function BookingsPage() {
   const [rejectionReason, setRejectionReason] = useState('')
   const [customReason, setCustomReason] = useState('')
   const [rejectionReasons, setRejectionReasons] = useState<string[]>(REJECTION_REASONS_DEFAULT)
-  const [scheduledDate,    setScheduledDate]    = useState('')
-  const [totalAmount,      setTotalAmount]      = useState('')
-  const [adminNotes,       setAdminNotes]       = useState('')
 
   const fetchBookings = useCallback(async () => {
     setLoading(true)
@@ -70,7 +67,7 @@ export default function BookingsPage() {
     }).catch(() => {})
   }, [])
 
-  const openDetail = (b: Booking) => { setSelected(b); setShowDetail(true); setRejectionReason(''); setCustomReason(''); setScheduledDate(''); setTotalAmount(''); setAdminNotes('') }
+  const openDetail = (b: Booking) => { setSelected(b); setShowDetail(true); setRejectionReason(''); setCustomReason('') }
 
   const updateStatus = async (newStatus: string) => {
     if (!selected) return
@@ -85,9 +82,6 @@ export default function BookingsPage() {
         status: newStatus,
         rejectionReason: finalReason || undefined,
         rejectionType: rejectionReason ? 'predefined' : 'custom',
-        scheduledDate: scheduledDate || undefined,
-        totalAmount:   totalAmount   ? Number(totalAmount) : undefined,
-        adminNotes:    adminNotes    || undefined,
       })
       toast.success(`Booking ${newStatus} successfully`)
       setShowDetail(false)
@@ -277,20 +271,6 @@ export default function BookingsPage() {
               </div>
 
               {/* Rejection reason if rejected */}
-              {/* Rating */}
-              {selected.status === 'completed' && (selected as any).rating && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-3">
-                  <p className="text-xs font-semibold text-yellow-700 dark:text-yellow-300 mb-1">Customer Rating</p>
-                  <div className="flex items-center gap-1 mb-1">
-                    {[1,2,3,4,5].map(s => (
-                      <span key={s} className={s <= (selected as any).rating ? 'text-yellow-400' : 'text-gray-300'}>★</span>
-                    ))}
-                    <span className="text-sm font-bold text-yellow-700 dark:text-yellow-300 ml-1">{(selected as any).rating}/5</span>
-                  </div>
-                  {(selected as any).review && <p className="text-xs text-yellow-600 dark:text-yellow-400 italic">"{(selected as any).review}"</p>}
-                </div>
-              )}
-
               {selected.status === 'rejected' && selected.rejectionReason && (
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
                   <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">Rejection Reason</p>
@@ -302,38 +282,6 @@ export default function BookingsPage() {
               {nextStatuses[selected.status] && (
                 <div className="space-y-3">
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">{t('updateStatus')}</h3>
-
-                  {/* Admin Notes */}
-                  <div>
-                    <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">Admin Note (Optional)</label>
-                    <textarea
-                      className="input-field text-sm resize-none"
-                      rows={2}
-                      placeholder="Technician name, instructions..."
-                      value={adminNotes}
-                      onChange={e => setAdminNotes(e.target.value)}
-                    />
-                  </div>
-
-                  {/* Scheduled Date — show for accept */}
-                  {selected.status === 'pending' && (
-                    <div>
-                      <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">Schedule Date (Optional)</label>
-                      <input type="datetime-local" className="input-field text-sm" value={scheduledDate} onChange={e => setScheduledDate(e.target.value)} />
-                    </div>
-                  )}
-
-                  {/* Total Amount — show for complete */}
-                  {selected.status === 'dispatched' && (
-                    <div>
-                      <label className="block text-xs font-semibold text-[var(--text-muted)] mb-1.5">Total Amount (₹)</label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] font-semibold">₹</span>
-                        <input type="number" className="input-field pl-7 text-sm" placeholder="e.g. 500" value={totalAmount} onChange={e => setTotalAmount(e.target.value)} />
-                      </div>
-                      <p className="text-xs text-[var(--text-muted)] mt-1">Visit charge + repair charge total</p>
-                    </div>
-                  )}
 
                   {/* Show rejection form if reject button exists */}
                   {nextStatuses[selected.status].some(s => s.value === 'rejected') && (

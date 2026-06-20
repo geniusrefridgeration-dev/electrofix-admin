@@ -26,31 +26,6 @@ const LANGS: { value: Language; label: string; flag: string }[] = [
 ]
 
 // ─── Floating popup that auto-dismisses ───────────────────────────────────────
-// ── Notification Sound ───────────────────────────────────────────────────────
-const ADMIN_SOUNDS = {
-  chime: [{ f:523,s:0,d:0.12 },{ f:659,s:0.13,d:0.12 },{ f:784,s:0.26,d:0.22 },{ f:1047,s:0.42,d:0.30 }],
-  bell:  [{ f:880,s:0,d:0.08 },{ f:880,s:0.10,d:0.08 },{ f:1047,s:0.22,d:0.15 },{ f:880,s:0.40,d:0.30 }],
-  ping:  [{ f:1047,s:0,d:0.06 },{ f:1319,s:0.08,d:0.08 },{ f:1568,s:0.18,d:0.20 }],
-  none:  [] as any[],
-}
-function playAdminSound(type: 'chime' | 'bell' | 'ping' | 'none' = 'chime') {
-  if (type === 'none') return
-  try {
-    const ctx = new ((window as any).AudioContext || (window as any).webkitAudioContext)()
-    const notes = ADMIN_SOUNDS[type] || ADMIN_SOUNDS.chime
-    notes.forEach(({ f, s, d }: any) => {
-      const osc = ctx.createOscillator()
-      const g   = ctx.createGain()
-      osc.connect(g); g.connect(ctx.destination)
-      osc.type = 'sine'; osc.frequency.value = f
-      g.gain.setValueAtTime(0, ctx.currentTime + s)
-      g.gain.linearRampToValueAtTime(0.3, ctx.currentTime + s + 0.01)
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + s + d)
-      osc.start(ctx.currentTime + s); osc.stop(ctx.currentTime + s + d + 0.05)
-    })
-  } catch {}
-}
-
 interface PopupData {
   id: string
   bookingId: string
@@ -125,7 +100,6 @@ export default function Layout() {
     admin, clearAuth, theme, toggleTheme, language, setLanguage,
     notifications, addNotification, markAllRead, unreadCount,
     sidebarOpen, setSidebarOpen,
-    notifSound,
   } = useAppStore()
   const t = useT()
   const navigate = useNavigate()
@@ -159,8 +133,17 @@ export default function Layout() {
         serviceName:  data.serviceName  || 'Service',
       }])
 
-      // 3. Audio notification sound
-      playAdminSound(notifSound || 'chime')
+      // 3. Audio beep
+      try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.connect(gain); gain.connect(ctx.destination)
+        osc.frequency.value = 880
+        gain.gain.setValueAtTime(0.25, ctx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5)
+        osc.start(); osc.stop(ctx.currentTime + 0.5)
+      } catch {}
     })
 
     return () => { socket.disconnect() }
@@ -192,12 +175,7 @@ export default function Layout() {
       )}>
         {/* Logo */}
         <div className="flex items-center gap-2.5 px-5 h-16 border-b border-[var(--border)] flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center shadow-sm">
-            <Zap size={16} className="text-white" fill="white" />
-          </div>
-          <span className="font-display font-bold text-lg tracking-tight text-[var(--text)] whitespace-nowrap">
-            Electro<span className="text-primary-500">Fix</span>
-          </span>
+          <img src="/logo-navbar.png" alt="ElectroFix" className="h-9 w-auto" />
         </div>
 
         {/* Nav links */}

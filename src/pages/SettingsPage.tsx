@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MapPin, Save, Plus, Trash2, Crosshair, X, IndianRupee, Info, CheckCircle, Search, Bell, Volume2 } from 'lucide-react'
-import { useT, useAppStore } from '@/store/appStore'
+import { MapPin, Save, Plus, Trash2, Crosshair, X, IndianRupee, Info, CheckCircle, Search } from 'lucide-react'
+import { useT } from '@/store/appStore'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
 
@@ -224,7 +224,6 @@ function ShopMap({ initialLat, initialLng, onSelect, onDeselect }: {
 
 // ─── Settings Page ────────────────────────────────────────────────────────────
 export default function SettingsPage() {
-  const { notifSound, setNotifSound } = useAppStore()
   const t = useT()
   const [shopLat, setShopLat] = useState<number | null>(null)
   const [shopLng, setShopLng] = useState<number | null>(null)
@@ -443,33 +442,6 @@ export default function SettingsPage() {
           ⚠️ Set shop location on the map before saving
         </p>
       )}
-      {/* ── Notification Sound ─────────────────────────────────────────────── */}
-      <div className="card p-6">
-        <div className="flex items-center gap-2 mb-5">
-          <Bell size={18} className="text-primary-500" />
-          <h2 className="font-display font-bold text-[var(--text)] text-lg">Notification Sound</h2>
-        </div>
-        <p className="text-sm text-[var(--text-muted)] mb-4">Naya booking aane par kaunsa sound bajaye</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {([
-            { value: 'chime', label: 'Chime 🎵', desc: 'Soft melody' },
-            { value: 'bell',  label: 'Bell 🔔',  desc: 'Classic bell' },
-            { value: 'ping',  label: 'Ping 🔊',  desc: 'Short ping'  },
-            { value: 'none',  label: 'None 🔇',  desc: 'Silent'      },
-          ] as const).map(s => (
-            <button key={s.value} onClick={() => setNotifSound(s.value)}
-              className={`flex flex-col items-start px-4 py-3 rounded-xl border text-sm transition-all ${
-                notifSound === s.value
-                  ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 shadow-sm'
-                  : 'border-[var(--border)] text-[var(--text-muted)] hover:border-primary-300 hover:text-[var(--text)]'
-              }`}>
-              <span className="font-semibold">{s.label}</span>
-              <span className="text-xs opacity-70 mt-0.5">{s.desc}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
     </div>
   )
 }
