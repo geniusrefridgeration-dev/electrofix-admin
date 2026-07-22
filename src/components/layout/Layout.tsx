@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Outlet } from 'react-router-dom'
 import {
   LayoutDashboard, Users, CalendarCheck, Wrench,
   Bell, Sun, Moon, Languages, LogOut, Menu, X,
-  Zap, ChevronDown, Settings, CheckCheck
+  Zap, ChevronDown, Settings, CheckCheck, UserCog, Receipt
 } from 'lucide-react'
 import { useAppStore, useT } from '@/store/appStore'
 import { io } from 'socket.io-client'
@@ -15,6 +15,8 @@ const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, key: 'dashboard'  as const },
   { to: '/bookings',  icon: CalendarCheck,   key: 'bookings'   as const },
   { to: '/services',  icon: Wrench,          key: 'services'   as const },
+  { to: '/employees', icon: UserCog,         key: 'employees'  as const },
+  { to: '/billing',   icon: Receipt,         key: 'billing'    as const },
   { to: '/customers', icon: Users,           key: 'customers'  as const },
   { to: '/settings',  icon: Settings,        key: 'settings'   as const },
 ]
@@ -174,8 +176,10 @@ export default function Layout() {
         !sidebarOpen && 'lg:w-0'
       )}>
         {/* Logo */}
-        <div className="flex items-center gap-2.5 px-5 h-16 border-b border-[var(--border)] flex-shrink-0">
-          <img src="/logo-navbar.png" alt="ElectroFix" className="h-9 w-auto" />
+        <div className="flex items-center gap-2.5 px-4 h-20 border-b border-[var(--border)] flex-shrink-0">
+          <div className="bg-white rounded-xl px-2 py-1">
+            <img src="/logo-navbar.png" alt="ElectroFix" className="h-12 w-auto" />
+          </div>
         </div>
 
         {/* Nav links */}

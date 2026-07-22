@@ -47,7 +47,7 @@ export default function LoginPage() {
         <div className="card p-8 animate-fade-in">
           {/* Logo */}
           <div className="flex flex-col items-center mb-8">
-            <img src="/logo-icon.png" alt="ElectroFix" className="w-20 h-20 rounded-2xl object-cover shadow-glow mb-4" />
+            <img src="/logo-icon.png" alt="ElectroFix" className="w-28 h-28 rounded-2xl object-cover shadow-glow mb-4" />
             <h1 className="text-2xl font-display font-bold text-[var(--text)]">
               Electro<span className="text-primary-500">Fix</span>
             </h1>

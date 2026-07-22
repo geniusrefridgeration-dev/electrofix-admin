@@ -9,6 +9,8 @@ import LoginPage from '@/pages/LoginPage'
 import DashboardPage from '@/pages/DashboardPage'
 import BookingsPage from '@/pages/BookingsPage'
 import ServicesPage from '@/pages/ServicesPage'
+import EmployeesPage from '@/pages/EmployeesPage'
+import BillingPage from '@/pages/BillingPage'
 import CustomersPage from '@/pages/CustomersPage'
 import SettingsPage from '@/pages/SettingsPage'
 
@@ -48,6 +50,8 @@ export default function App() {
           <Route path="dashboard"  element={<DashboardPage />} />
           <Route path="bookings"   element={<BookingsPage />} />
           <Route path="services"   element={<ServicesPage />} />
+          <Route path="employees"  element={<EmployeesPage />} />
+          <Route path="billing"    element={<BillingPage />} />
           <Route path="customers"  element={<CustomersPage />} />
           <Route path="settings"   element={<SettingsPage />} />
         </Route>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Search, Filter, Eye, ChevronLeft, ChevronRight, MapPin, Phone, Wrench, Clock, CheckCircle, XCircle, Truck, AlertCircle } from 'lucide-react'
+import { Search, Filter, Eye, ChevronLeft, ChevronRight, MapPin, Phone, Wrench, Clock, CheckCircle, XCircle, Truck, AlertCircle, UserCog } from 'lucide-react'
 import { useT } from '@/store/appStore'
 import api from '@/lib/api'
 import { format } from 'date-fns'
@@ -26,6 +26,12 @@ interface Booking {
   distanceKm: number
   createdAt: string
   rejectionReason?: string
+  assignedEmployee?: string | null
+  employeeSnapshot?: { name: string; mobile: string; designation: string; profileImage?: string; employeeIdCode?: string } | null
+  totalAmount?: number | null
+  grandTotal?: number | null
+  paymentStatus?: 'unpaid' | 'paid' | 'partial'
+  invoiceNumber?: string | null
 }
 
 export default function BookingsPage() {
@@ -67,7 +73,14 @@ export default function BookingsPage() {
     }).catch(() => {})
   }, [])
 
-  const openDetail = (b: Booking) => { setSelected(b); setShowDetail(true); setRejectionReason(''); setCustomReason('') }
+  const openDetail = (b: Booking) => { setSelected(b); setShowDetail(true); setRejectionReason(''); setCustomReason(''); setSelectedEmployeeId('') }
+
+  const [employees, setEmployees] = useState<{ _id: string; name: string; mobile: string; designation: string; specialization: string[]; isActive: boolean; employeeIdCode: string }[]>([])
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState('')
+
+  useEffect(() => {
+    api.get('/admin/employees?active=true').then(res => setEmployees(res.data.employees)).catch(() => {})
+  }, [])
 
   const updateStatus = async (newStatus: string) => {
     if (!selected) return
@@ -76,12 +89,17 @@ export default function BookingsPage() {
       toast.error('Please provide a rejection reason')
       return
     }
+    if (newStatus === 'dispatched' && !selectedEmployeeId) {
+      toast.error('Please select an employee to dispatch')
+      return
+    }
     setUpdatingStatus(true)
     try {
       await api.put(`/admin/bookings/${selected._id}/status`, {
         status: newStatus,
         rejectionReason: finalReason || undefined,
         rejectionType: rejectionReason ? 'predefined' : 'custom',
+        employeeId: newStatus === 'dispatched' ? selectedEmployeeId : undefined,
       })
       toast.success(`Booking ${newStatus} successfully`)
       setShowDetail(false)
@@ -270,6 +288,28 @@ export default function BookingsPage() {
                 </div>
               </div>
 
+              {/* Assigned Employee info */}
+              {selected.employeeSnapshot && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {selected.employeeSnapshot.profileImage ? (
+                      <img src={selected.employeeSnapshot.profileImage} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserCog size={18} className="text-blue-600 dark:text-blue-400" />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-blue-600 dark:text-blue-400">Dispatched Technician</p>
+                    <p className="text-sm font-medium text-[var(--text)]">
+                      {selected.employeeSnapshot.name} • {selected.employeeSnapshot.designation}
+                    </p>
+                    <p className="text-xs text-[var(--text-muted)]">
+                      {selected.employeeSnapshot.employeeIdCode} • {selected.employeeSnapshot.mobile}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Rejection reason if rejected */}
               {selected.status === 'rejected' && selected.rejectionReason && (
                 <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
@@ -300,6 +340,28 @@ export default function BookingsPage() {
                         value={customReason}
                         onChange={(e) => setCustomReason(e.target.value)}
                       />
+                    </div>
+                  )}
+
+                  {/* Show employee selector if dispatch button exists */}
+                  {nextStatuses[selected.status].some(s => s.value === 'dispatched') && (
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold text-[var(--text-muted)]">Select Employee to Dispatch *</label>
+                      <select
+                        className="input-field text-sm"
+                        value={selectedEmployeeId}
+                        onChange={(e) => setSelectedEmployeeId(e.target.value)}
+                      >
+                        <option value="">-- Select an employee --</option>
+                        {employees.map((emp) => (
+                          <option key={emp._id} value={emp._id}>
+                            {emp.name} — {emp.designation} ({emp.employeeIdCode}) — {emp.mobile}
+                          </option>
+                        ))}
+                      </select>
+                      {employees.length === 0 && (
+                        <p className="text-xs text-amber-600">No active employees found. Add one from the Employees page.</p>
+                      )}
                     </div>
                   )}
 
