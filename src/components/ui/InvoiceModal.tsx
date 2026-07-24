@@ -1,4 +1,4 @@
-import { X, Printer, Download } from 'lucide-react'
+import { X, Printer } from 'lucide-react'
 // Admin uses inline Booking type
 interface BookingForInvoice { _id: string; bookingId: string; status: string; customerSnapshot?: any; service?: any; homeVisitCharge?: number; [key: string]: any }
 
@@ -6,11 +6,11 @@ const PHONE   = (import.meta.env.VITE_SHOP_PHONE   as string) || '+919876543210'
 const SITE    = (import.meta.env.VITE_SITE_URL     as string) || 'https://electrofix.in'
 
 interface Props {
-  booking: BookingForInvoiceForInvoice
+  booking: BookingForInvoice
   onClose: () => void
 }
 
-function InvoiceView({ booking }: { booking: BookingForInvoiceForInvoice }) {
+function InvoiceView({ booking }: { booking: BookingForInvoice }) {
   const b   = booking as any
   const now = new Date(b.billGeneratedAt || b.completedAt || b.createdAt)
   const items: { label: string; amount: number; quantity: number }[] = b.billItems || []

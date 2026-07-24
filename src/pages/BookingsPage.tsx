@@ -78,6 +78,7 @@ export default function BookingsPage() {
 
   const [employees, setEmployees] = useState<{ _id: string; name: string; mobile: string; designation: string; specialization: string[]; isActive: boolean; employeeIdCode: string }[]>([])
   const [selectedEmployeeId, setSelectedEmployeeId] = useState('')
+  const [viewInvoice, setViewInvoice] = useState<Booking | null>(null)
 
   useEffect(() => {
     api.get('/admin/employees?active=true').then(res => setEmployees(res.data.employees)).catch(() => {})
