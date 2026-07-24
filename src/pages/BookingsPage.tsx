@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Search, Filter, Eye, ChevronLeft, ChevronRight, MapPin, Phone, Wrench, Clock, CheckCircle, XCircle, Truck, AlertCircle, UserCog } from 'lucide-react'
+import { Search, Filter, Eye, ChevronLeft, ChevronRight, MapPin, Phone, Wrench, Clock, CheckCircle, XCircle, Truck, AlertCircle, UserCog, FileText } from 'lucide-react'
+import InvoiceModal from '@/components/ui/InvoiceModal'
 import { useT } from '@/store/appStore'
 import api from '@/lib/api'
 import { format } from 'date-fns'
@@ -385,6 +386,9 @@ export default function BookingsPage() {
             </div>
           </div>
         </div>
+      )}
+      {viewInvoice && (
+        <InvoiceModal booking={viewInvoice} onClose={() => setViewInvoice(null)} />
       )}
     </div>
   )

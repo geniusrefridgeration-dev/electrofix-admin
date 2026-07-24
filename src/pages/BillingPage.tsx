@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Receipt, Plus, Trash2, X, IndianRupee, CheckCircle2, Clock, Search } from 'lucide-react'
+import { Receipt, Plus, Trash2, X, IndianRupee, CheckCircle2, Clock, Search, Eye } from 'lucide-react'
+import InvoiceModal from '@/components/ui/InvoiceModal'
 import { useT } from '@/store/appStore'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
@@ -154,6 +155,7 @@ export default function BillingPage() {
   const [filterPayment, setFilterPayment] = useState<'all' | 'paid' | 'unpaid'>('all')
   const [editing, setEditing] = useState<Booking | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [viewInvoice, setViewInvoice] = useState<Booking | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -288,9 +290,16 @@ export default function BillingPage() {
                     </td>
                     <td className="px-4 py-3 text-center text-xs text-[var(--text-muted)]">{b.invoiceNumber || '—'}</td>
                     <td className="px-4 py-3 text-center">
-                      <button onClick={() => setEditing(b)} className="text-primary-500 hover:underline text-xs font-medium">
-                        {b.invoiceNumber ? 'Edit Bill' : 'Generate Bill'}
-                      </button>
+                      <div className="flex items-center gap-2 justify-center">
+                        {b.invoiceNumber && (
+                          <button onClick={() => setViewInvoice(b)} className="text-blue-500 hover:underline text-xs font-medium flex items-center gap-1">
+                            <Eye size={12} /> View
+                          </button>
+                        )}
+                        <button onClick={() => setEditing(b)} className="text-primary-500 hover:underline text-xs font-medium">
+                          {b.invoiceNumber ? 'Edit' : 'Generate Bill'}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -298,6 +307,10 @@ export default function BillingPage() {
             </table>
           </div>
         </div>
+      )}
+
+      {viewInvoice && (
+        <InvoiceModal booking={viewInvoice} onClose={() => setViewInvoice(null)} />
       )}
 
       {editing && (
